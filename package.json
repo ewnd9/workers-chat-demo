@@ -2,6 +2,17 @@
   "name": "edge-chat-demo",
   "description": "An edge chat service that runs on Cloudflare Workers using Durable Objects",
   "version": "1.0.0",
-  "module": "./src/chat.mjs",
-  "private": true
+  "private": true,
+  "type": "module",
+  "module": "./dist/index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist",
+    "build": "esbuild --bundle --sourcemap --format=esm --outdir=dist --external:'chat.html' --external:'chat.css' ./src/index.ts && cp public/chat.* dist",
+    "start:dev": "miniflare --watch --debug"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.3.1",
+    "esbuild": "^0.14.14",
+    "miniflare": "^2.2.0"
+  }
 }

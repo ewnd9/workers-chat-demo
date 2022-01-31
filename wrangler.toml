@@ -5,19 +5,20 @@ compatibility_date = "2021-11-08"
 # Add your account ID here
 account_id = ""
 
+[build]
+command = "yarn build"
 [build.upload]
 format = "modules"
-dir = "src"
-main = "./chat.mjs"
-rules = [{type = "Data", globs = ["**/*.html"]}]
+dir = "dist"
+main = "./index.js"
+rules = [{type = "Data", globs = ["**/*.html", "**/*.css"]}]
 
 [durable_objects]
 bindings = [
-  { name = "rooms", class_name = "ChatRoom" },
-  { name = "limiters", class_name = "RateLimiter" }
+  { name = "rooms", class_name = "ChatRoom" }
 ]
 
 # Indicate that you want the ChatRoom and RateLimiter classes to be callable as Durable Objects.
 [[migrations]]
 tag = "v1" # Should be unique for each entry
-new_classes = ["ChatRoom", "RateLimiter"]
+new_classes = ["ChatRoom"]
