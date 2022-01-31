@@ -112,7 +112,7 @@ interface ChatRoomSession {
   name?: string;
   quit?: boolean;
   webSocket: WebSocket;
-  blockedMessages?: string[];
+  blockedMessages: string[];
 }
 
 // ChatRoom implements a Durable Object that coordinates an individual chat room. Participants
@@ -158,7 +158,7 @@ export class ChatRoom implements DurableObject {
 
     this.sessions.forEach((otherSession) => {
       if (otherSession.name) {
-        session.blockedMessages?.push(
+        session.blockedMessages.push(
           JSON.stringify({ joined: otherSession.name })
         );
       }
@@ -172,7 +172,7 @@ export class ChatRoom implements DurableObject {
     const backlog = [...storage.values()];
     backlog.reverse();
     backlog.forEach((value) => {
-      session.blockedMessages?.push(value);
+      session.blockedMessages.push(value);
     });
 
     let receivedUserInfo = false;
@@ -206,10 +206,10 @@ export class ChatRoom implements DurableObject {
           }
 
           // Deliver all the messages we queued up since the user connected.
-          session.blockedMessages?.forEach((queued) => {
+          session.blockedMessages.forEach((queued) => {
             webSocket.send(queued);
           });
-          delete session.blockedMessages;
+          session.blockedMessages.splice(0, session.blockedMessages.length);
 
           this.broadcast({ joined: session.name });
           webSocket.send(JSON.stringify({ ready: true }));
@@ -275,7 +275,7 @@ export class ChatRoom implements DurableObject {
       } else {
         // This session hasn't sent the initial user info message yet, so we're not sending them
         // messages yet (no secret lurking!). Queue the message to be sent later.
-        session.blockedMessages?.push(message);
+        session.blockedMessages.push(message);
         return true;
       }
     });
