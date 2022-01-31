@@ -1,5 +1,7 @@
+// injected from miniflare
 import HTML from 'chat.html';
 import CSS from 'chat.css';
+import JS from 'chat.js';
 
 interface Env {
   rooms: DurableObjectNamespace;
@@ -14,6 +16,8 @@ export default {
         return handleStaticRequest(HTML, 'text/html;charset=UTF-8');
       } else if (url.pathname === '/chat.css') {
         return handleStaticRequest(CSS, 'text/css;charset=UTF-8');
+      } else if (url.pathname === '/chat.js') {
+        return handleStaticRequest(JS, 'text/css;charset=UTF-8');
       } else if (url.pathname.startsWith('/api')) {
         return handleApiRequest(url.pathname.split('/').slice(2), request, env);
       } else {
@@ -233,12 +237,9 @@ export class ChatRoom implements DurableObject {
         let dataStr = JSON.stringify(data);
         this.broadcast(dataStr);
 
-        // Save message.
         let key = new Date(data.timestamp).toISOString();
         await this.storage.put(key, dataStr);
       } catch (err: any) {
-        // Report any exceptions directly back to the client. As with our handleErrors() this
-        // probably isn't what you'd want to do in production, but it's convenient when testing.
         webSocket.send(JSON.stringify({ error: err.stack }));
       }
     });
