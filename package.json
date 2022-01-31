@@ -8,8 +8,8 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "yarn build:worker && yarn build:html",
-    "build:worker": "esbuild --bundle --sourcemap --format=esm --outdir=dist --external:'chat.html' --external:'chat.css' --external:'chat.js' ./src/index.ts",
-    "build:html": "esbuild --bundle --sourcemap --outdir=dist ./public/chat.ts && cp public/chat.{html,css} dist",
+    "build:worker": "esbuild --bundle --sourcemap --format=esm --outdir=dist --external:'chat.html' --external:'chat.css' --external:'chat.js' ./src/worker/index.ts",
+    "build:html": "esbuild --bundle --sourcemap --outdir=dist ./src/client/chat.ts && cp public/chat.{html,css} dist",
     "start:dev": "miniflare --watch --debug"
   },
   "devDependencies": {
